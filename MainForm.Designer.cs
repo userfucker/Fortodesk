@@ -37,6 +37,11 @@ namespace Fortodesk
             this.打开todeskToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.结束todesk进程ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.截取全屏ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.rustdesk相关操作ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.下载rustdeskToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.下载rustdesk蓝奏云ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.打开rustdeskToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.结束rustdeskToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.获取连连控截图ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.连连控相关操作ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.下载连连控ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -83,6 +88,7 @@ namespace Fortodesk
             this.olv9 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olv10 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olv11 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.测试注册表ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.treeListView1)).BeginInit();
@@ -95,6 +101,7 @@ namespace Fortodesk
             this.获取todesk截图ToolStripMenuItem,
             this.todesk相关操作ToolStripMenuItem,
             this.截取全屏ToolStripMenuItem,
+            this.rustdesk相关操作ToolStripMenuItem,
             this.获取连连控截图ToolStripMenuItem,
             this.连连控相关操作ToolStripMenuItem,
             this.一键卸载开机启动ToolStripMenuItem,
@@ -110,9 +117,10 @@ namespace Fortodesk
             this.获取进程ToolStripMenuItem,
             this.一键重建硬盘ToolStripMenuItem,
             this.重启ToolStripMenuItem,
-            this.关机ToolStripMenuItem});
+            this.关机ToolStripMenuItem,
+            this.测试注册表ToolStripMenuItem});
             this.contextMenuStrip.Name = "contextMenuStrip";
-            this.contextMenuStrip.Size = new System.Drawing.Size(221, 444);
+            this.contextMenuStrip.Size = new System.Drawing.Size(221, 488);
             this.contextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip_Opening);
             // 
             // 获取todesk截图ToolStripMenuItem
@@ -159,6 +167,45 @@ namespace Fortodesk
             this.截取全屏ToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
             this.截取全屏ToolStripMenuItem.Text = "截取全屏";
             this.截取全屏ToolStripMenuItem.Click += new System.EventHandler(this.截取全屏ToolStripMenuItem_Click);
+            // 
+            // rustdesk相关操作ToolStripMenuItem
+            // 
+            this.rustdesk相关操作ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.下载rustdeskToolStripMenuItem,
+            this.下载rustdesk蓝奏云ToolStripMenuItem,
+            this.打开rustdeskToolStripMenuItem,
+            this.结束rustdeskToolStripMenuItem});
+            this.rustdesk相关操作ToolStripMenuItem.Name = "rustdesk相关操作ToolStripMenuItem";
+            this.rustdesk相关操作ToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
+            this.rustdesk相关操作ToolStripMenuItem.Text = "rustdesk相关操作";
+            // 
+            // 下载rustdeskToolStripMenuItem
+            // 
+            this.下载rustdeskToolStripMenuItem.Name = "下载rustdeskToolStripMenuItem";
+            this.下载rustdeskToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+            this.下载rustdeskToolStripMenuItem.Text = "下载rustdesk(123云盘)";
+            this.下载rustdeskToolStripMenuItem.Click += new System.EventHandler(this.下载rustdeskToolStripMenuItem_Click);
+            // 
+            // 下载rustdesk蓝奏云ToolStripMenuItem
+            // 
+            this.下载rustdesk蓝奏云ToolStripMenuItem.Name = "下载rustdesk蓝奏云ToolStripMenuItem";
+            this.下载rustdesk蓝奏云ToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+            this.下载rustdesk蓝奏云ToolStripMenuItem.Text = "下载rustdesk(蓝奏云)";
+            this.下载rustdesk蓝奏云ToolStripMenuItem.Click += new System.EventHandler(this.下载rustdesk蓝奏云ToolStripMenuItem_Click);
+            // 
+            // 打开rustdeskToolStripMenuItem
+            // 
+            this.打开rustdeskToolStripMenuItem.Name = "打开rustdeskToolStripMenuItem";
+            this.打开rustdeskToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+            this.打开rustdeskToolStripMenuItem.Text = "打开rustdesk";
+            this.打开rustdeskToolStripMenuItem.Click += new System.EventHandler(this.打开rustdeskToolStripMenuItem_Click);
+            // 
+            // 结束rustdeskToolStripMenuItem
+            // 
+            this.结束rustdeskToolStripMenuItem.Name = "结束rustdeskToolStripMenuItem";
+            this.结束rustdeskToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+            this.结束rustdeskToolStripMenuItem.Text = "结束rustdesk";
+            this.结束rustdeskToolStripMenuItem.Click += new System.EventHandler(this.结束rustdeskToolStripMenuItem_Click);
             // 
             // 获取连连控截图ToolStripMenuItem
             // 
@@ -573,6 +620,13 @@ namespace Fortodesk
             this.olv11.Text = "主板信息";
             this.olv11.Width = 200;
             // 
+            // 测试注册表ToolStripMenuItem
+            // 
+            this.测试注册表ToolStripMenuItem.Name = "测试注册表ToolStripMenuItem";
+            this.测试注册表ToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
+            this.测试注册表ToolStripMenuItem.Text = "测试注册表";
+            this.测试注册表ToolStripMenuItem.Click += new System.EventHandler(this.测试注册表ToolStripMenuItem_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 14F);
@@ -653,6 +707,12 @@ namespace Fortodesk
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.Button button2;
         private RichTextBoxPlus richTextBoxPlus1;
+        private System.Windows.Forms.ToolStripMenuItem rustdesk相关操作ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 下载rustdeskToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 结束rustdeskToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 打开rustdeskToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 下载rustdesk蓝奏云ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 测试注册表ToolStripMenuItem;
     }
 }
 

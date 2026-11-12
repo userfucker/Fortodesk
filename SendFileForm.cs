@@ -34,7 +34,7 @@ namespace Fortodesk
             foreach (var label in PathLabels)
                 comboBox1.Items.Add(label);
 
-            comboBox1.SelectedIndex = 0;
+            comboBox1.SelectedIndex = 1;
             comboBox1.SelectedIndexChanged += ComboBox1_SelectedIndexChanged;
 
             // ===== 新增：支持拖拽文件到 textBox1 =====
