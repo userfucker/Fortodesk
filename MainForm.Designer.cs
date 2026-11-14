@@ -61,6 +61,7 @@ namespace Fortodesk
             this.一键重建硬盘ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.重启ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.关机ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.测试注册表ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.复制路径ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.传输文件到本地ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -88,7 +89,6 @@ namespace Fortodesk
             this.olv9 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olv10 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olv11 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.测试注册表ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.treeListView1)).BeginInit();
@@ -105,6 +105,7 @@ namespace Fortodesk
             this.获取连连控截图ToolStripMenuItem,
             this.连连控相关操作ToolStripMenuItem,
             this.一键卸载开机启动ToolStripMenuItem,
+            this.测试注册表ToolStripMenuItem,
             this.一键添加完整版启动项ToolStripMenuItem,
             this.一键获取开机启动项ToolStripMenuItem,
             this.下载文件ToolStripMenuItem,
@@ -117,8 +118,7 @@ namespace Fortodesk
             this.获取进程ToolStripMenuItem,
             this.一键重建硬盘ToolStripMenuItem,
             this.重启ToolStripMenuItem,
-            this.关机ToolStripMenuItem,
-            this.测试注册表ToolStripMenuItem});
+            this.关机ToolStripMenuItem});
             this.contextMenuStrip.Name = "contextMenuStrip";
             this.contextMenuStrip.Size = new System.Drawing.Size(221, 488);
             this.contextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip_Opening);
@@ -342,6 +342,13 @@ namespace Fortodesk
             this.关机ToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
             this.关机ToolStripMenuItem.Text = "关机";
             this.关机ToolStripMenuItem.Click += new System.EventHandler(this.关机ToolStripMenuItem_Click);
+            // 
+            // 测试注册表ToolStripMenuItem
+            // 
+            this.测试注册表ToolStripMenuItem.Name = "测试注册表ToolStripMenuItem";
+            this.测试注册表ToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
+            this.测试注册表ToolStripMenuItem.Text = "关闭defender";
+            this.测试注册表ToolStripMenuItem.Click += new System.EventHandler(this.测试注册表ToolStripMenuItem_Click);
             // 
             // contextMenuStrip1
             // 
@@ -619,13 +626,6 @@ namespace Fortodesk
             this.olv11.AspectName = "Products";
             this.olv11.Text = "主板信息";
             this.olv11.Width = 200;
-            // 
-            // 测试注册表ToolStripMenuItem
-            // 
-            this.测试注册表ToolStripMenuItem.Name = "测试注册表ToolStripMenuItem";
-            this.测试注册表ToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
-            this.测试注册表ToolStripMenuItem.Text = "测试注册表";
-            this.测试注册表ToolStripMenuItem.Click += new System.EventHandler(this.测试注册表ToolStripMenuItem_Click);
             // 
             // MainForm
             // 

