@@ -267,6 +267,29 @@ namespace Fortodesk
                 }
             };
 
+            objectListView.UseCellFormatEvents = true;
+            objectListView.FormatCell += (s, args) =>
+            {
+                if (!(args.Model is HostInfo h)) return;
+                if (args.Column.Text != "状态") return;
+
+                switch (h.OnlineStatus)
+                {
+                    case "在线":
+                        args.SubItem.ForeColor = Color.Green;
+                        break;
+                    case "离线":
+                        args.SubItem.ForeColor = Color.Red;
+                        break;
+                    case "重连中":
+                        args.SubItem.ForeColor = Color.Orange;
+                        break;
+                    default:
+                        args.SubItem.ForeColor = objectListView.ForeColor;
+                        break;
+                }
+            };
+
 
             // 哪些节点可以展开（目录节点）
             treeListView1.CanExpandGetter = model =>
@@ -3626,9 +3649,13 @@ namespace Fortodesk
 
         private void objectListView_DoubleClick(object sender, EventArgs e)
         {
-            HostInfo host = objectListView.SelectedObject as HostInfo;
-            if (host == null) return;
+            //双击清空离线数据
 
+            HostInfo host = objectListView.SelectedObject as HostInfo;
+            if (host == null)
+            {
+                return;
+            }
             // ★ 改动：双击时先取消正在进行的自动重连循环，再发起新连接
             // 原代码直接重置IsConnecting=false会导致并发ConnectToAgent互相踢出
             CancellationTokenSource oldCts = null;
@@ -3645,7 +3672,7 @@ namespace Fortodesk
             if (host.IsConnecting)
             {
                 AppendLog($"[{host.HostName}] 正在取消旧连接，请稍候...");
-                Thread.Sleep(300);
+                Thread.Sleep(150);
                 host.IsConnecting = false;  // 强制清零，让新连接可以进入
             }
 

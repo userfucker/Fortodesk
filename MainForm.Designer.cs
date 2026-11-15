@@ -48,6 +48,7 @@ namespace Fortodesk
             this.打开连连控ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.结束连连控ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.一键卸载开机启动ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.测试注册表ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.一键添加完整版启动项ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.一键获取开机启动项ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.下载文件ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -61,7 +62,6 @@ namespace Fortodesk
             this.一键重建硬盘ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.重启ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.关机ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.测试注册表ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.复制路径ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.传输文件到本地ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -120,7 +120,7 @@ namespace Fortodesk
             this.重启ToolStripMenuItem,
             this.关机ToolStripMenuItem});
             this.contextMenuStrip.Name = "contextMenuStrip";
-            this.contextMenuStrip.Size = new System.Drawing.Size(221, 488);
+            this.contextMenuStrip.Size = new System.Drawing.Size(221, 466);
             this.contextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip_Opening);
             // 
             // 获取todesk截图ToolStripMenuItem
@@ -252,6 +252,13 @@ namespace Fortodesk
             this.一键卸载开机启动ToolStripMenuItem.Text = "一键卸载开机启动";
             this.一键卸载开机启动ToolStripMenuItem.Click += new System.EventHandler(this.一键卸载开机启动ToolStripMenuItem_Click);
             // 
+            // 测试注册表ToolStripMenuItem
+            // 
+            this.测试注册表ToolStripMenuItem.Name = "测试注册表ToolStripMenuItem";
+            this.测试注册表ToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
+            this.测试注册表ToolStripMenuItem.Text = "关闭defender";
+            this.测试注册表ToolStripMenuItem.Click += new System.EventHandler(this.测试注册表ToolStripMenuItem_Click);
+            // 
             // 一键添加完整版启动项ToolStripMenuItem
             // 
             this.一键添加完整版启动项ToolStripMenuItem.Name = "一键添加完整版启动项ToolStripMenuItem";
@@ -342,13 +349,6 @@ namespace Fortodesk
             this.关机ToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
             this.关机ToolStripMenuItem.Text = "关机";
             this.关机ToolStripMenuItem.Click += new System.EventHandler(this.关机ToolStripMenuItem_Click);
-            // 
-            // 测试注册表ToolStripMenuItem
-            // 
-            this.测试注册表ToolStripMenuItem.Name = "测试注册表ToolStripMenuItem";
-            this.测试注册表ToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
-            this.测试注册表ToolStripMenuItem.Text = "关闭defender";
-            this.测试注册表ToolStripMenuItem.Click += new System.EventHandler(this.测试注册表ToolStripMenuItem_Click);
             // 
             // contextMenuStrip1
             // 
